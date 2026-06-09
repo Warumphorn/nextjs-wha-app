@@ -9,6 +9,7 @@ import CountCartItem from "@/app/(front)/components/CountCartItem";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import LogoutButton from "./logout-button";
+import { ThemeToggle } from "./theme-toggle";
 
 const Navbar = async () => {
   const session = await auth.api.getSession({
@@ -30,7 +31,8 @@ const Navbar = async () => {
         </Link>
 
         <div className="flex items-center gap-3">
-          
+          <ThemeToggle />
+
           {
             !session && (
               <>

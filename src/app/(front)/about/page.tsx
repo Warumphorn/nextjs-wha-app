@@ -1,6 +1,6 @@
 import Link from "next/link";
 import AppLoading from "../components/app-loading";
-import { getApiVersion } from "@/lib/services";
+import { getApiVersion } from "@/services";
 import { Suspense } from "react";
 
 async function ApiVersion() {

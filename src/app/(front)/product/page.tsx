@@ -1,5 +1,5 @@
 import FeaturesProduct from "@/components/features-product";
-import { getProducts } from "@/lib/services";
+import { getProducts } from "@/services";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

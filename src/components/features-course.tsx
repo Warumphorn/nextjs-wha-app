@@ -19,7 +19,7 @@ const FeaturesCourse = ({ courses }: Props) => {
           {courses.map((course) => (
             <div
               className="flex w-full flex-col text-start"
-              key={course.title}
+              key={course.id}
             >
               <div className="relative mb-5 aspect-4/5 w-full overflow-hidden rounded-xl sm:mb-6">
                 <Image

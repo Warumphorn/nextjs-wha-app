@@ -1,4 +1,4 @@
-import { getProducts, getCourses, getApiVersion } from "@/lib/services";
+import { getProducts, getCourses, getApiVersion } from "@/services";
 
 export async function GET() {
   try {
