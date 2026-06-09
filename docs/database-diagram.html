@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database ER Diagram - WHA E-Commerce</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h1 {
+      color: #1e3a5f;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #333;
+    }
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid;
+    }
+    .mermaid {
+      text-align: center;
+    }
+    .table-count {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+    }
+    @media print {
+      .no-print { display: none; }
+      body { background: white; }
+      .container { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🗄️ Database ER Diagram</h1>
+    <p class="subtitle">WHA E-Commerce + Better-Auth Schema</p>
+    
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background:#e3f2fd;border-color:#1976d2;"></div>
+        <span>E-Commerce Core Tables</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background:#f3e5f5;border-color:#7b1fa2;"></div>
+        <span>Better-Auth Tables</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background:#fff3e0;border-color:#f57c00;"></div>
+        <span>Foreign Keys</span>
+      </div>
+    </div>
+
+    <div class="mermaid">
+erDiagram
+    %% E-Commerce Core Tables
+    CATEGORIES {
+        int id PK
+        varchar name
+    }
+    PRODUCTS {
+        int id PK
+        varchar name
+        text description
+        decimal price
+        int category_id FK
+    }
+    PRODUCT_IMAGES {
+        int id PK
+        int product_id FK
+        text image_name
+        timestamp created_at
+    }
+    CUSTOMERS {
+        int id PK
+        varchar name
+        varchar address
+        varchar phone
+    }
+    ORDERS {
+        int id PK
+        datetime date
+        int customer_id FK
+        enum status
+        decimal total_amount
+    }
+    ORDER_ITEMS {
+        int id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        decimal price
+    }
+
+    %% Better-Auth Tables
+    USER {
+        varchar id PK
+        text name
+        varchar email UK
+        boolean emailVerified
+        text image
+        datetime createdAt
+        datetime updatedAt
+    }
+    SESSION {
+        varchar id PK
+        datetime expiresAt
+        varchar token UK
+        datetime createdAt
+        datetime updatedAt
+        text ipAddress
+        text userAgent
+        varchar userId FK
+    }
+    ACCOUNT {
+        varchar id PK
+        text accountId
+        text providerId
+        varchar userId FK
+        text accessToken
+        text refreshToken
+        text idToken
+        datetime accessTokenExpiresAt
+        datetime refreshTokenExpiresAt
+        text scope
+        text password
+        datetime createdAt
+        datetime updatedAt
+    }
+    VERIFICATION {
+        varchar id PK
+        text identifier
+        text value
+        datetime expiresAt
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    %% Relationships - E-Commerce
+    CATEGORIES ||--o{ PRODUCTS : "has"
+    PRODUCTS ||--o{ PRODUCT_IMAGES : "has"
+    PRODUCTS ||--o{ ORDER_ITEMS : "in"
+    CUSTOMERS ||--o{ ORDERS : "places"
+    ORDERS ||--o{ ORDER_ITEMS : "contains"
+
+    %% Relationships - Better-Auth
+    USER ||--o{ SESSION : "has"
+    USER ||--o{ ACCOUNT : "has"
+    USER ||--o{ VERIFICATION : "has"
+
+    %% Styling
+    classDef ecommerce fill:#e3f2fd,stroke:#1976d2,stroke-width:2px;
+    classDef auth fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    classDef fk fill:#fff3e0,stroke:#f57c00,stroke-width:2px,stroke-dasharray: 5 5;
+
+    class CATEGORIES,PRODUCTS,PRODUCT_IMAGES,CUSTOMERS,ORDERS,ORDER_ITEMS ecommerce;
+    class USER,SESSION,ACCOUNT,VERIFICATION auth;
+</div>
+
+    <p class="table-count">Total: 10 Tables (6 E-Commerce + 4 Better-Auth)</p>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      er: {
+        diagramPadding: 20,
+        layoutDirection: 'TB',
+        entityPadding: 15,
+        minEntityWidth: 100,
+        minEntityHeight: 75
+      },
+      flowchart: {
+        curve: 'linear'
+      }
+    });
+  </script>
+</body>
+</html>
