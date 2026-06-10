@@ -2,16 +2,15 @@
 
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+import { useSyncExternalStore, useCallback } from "react";
 
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const isDark = !mounted || resolvedTheme === "dark";
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const toggle = useCallback(() => {
     const next = resolvedTheme === "dark" ? "light" : "dark";

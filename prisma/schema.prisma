@@ -26,7 +26,7 @@ model order_items {
   order_id   Int
   product_id Int
   quantity   Int
-  price      Decimal  @db.Decimal(10, 2)
+  price      Float
   orders     orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_items_ibfk_1")
   products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_ibfk_2")
 
@@ -39,7 +39,7 @@ model orders {
   date         DateTime?      @db.DateTime(0)
   customer_id  Int?
   status       orders_status?
-  total_amount Decimal?       @db.Decimal(10, 2)
+  total_amount Float?
   order_items  order_items[]
   customers    customers?     @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
 
@@ -60,7 +60,7 @@ model products {
   id             Int              @id @unique(map: "id") @default(autoincrement())
   name           String?          @db.VarChar(255)
   description    String?          @db.Text
-  price          Decimal?         @db.Decimal(10, 2)
+  price          Float?
   category_id    Int?
   order_items    order_items[]
   product_images product_images[]
@@ -69,31 +69,25 @@ model products {
   @@index([category_id], map: "category_id")
 }
 
-enum orders_status {
-  delivered
-  received
-  processing
-}
-
 model User {
   id            String    @id
   name          String    @db.Text
-  email         String
+  email         String    @unique
   emailVerified Boolean   @default(false)
   image         String?   @db.Text
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  sessions      Session[]
+  role          String    @default("customer") @db.VarChar(50)
   accounts      Account[]
+  sessions      Session[]
 
-  @@unique([email])
   @@map("user")
 }
 
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?  @db.Text
@@ -101,8 +95,7 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
-  @@index([userId(length: 191)])
+  @@index([userId])
   @@map("session")
 }
 
@@ -111,7 +104,6 @@ model Account {
   accountId             String    @db.Text
   providerId            String    @db.Text
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?   @db.Text
   refreshToken          String?   @db.Text
   idToken               String?   @db.Text
@@ -121,8 +113,9 @@ model Account {
   password              String?   @db.Text
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId(length: 191)])
+  @@index([userId])
   @@map("account")
 }
 
@@ -136,4 +129,10 @@ model Verification {
 
   @@index([identifier(length: 191)])
   @@map("verification")
+}
+
+enum orders_status {
+  delivered
+  received
+  processing
 }

@@ -17,11 +17,25 @@ export async function POST(request: NextRequest) {
 
     const { name, email, message } = result.data
 
+    if (!process.env.RESEND_API_KEY) {
+      return Response.json(
+        { success: false, error: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า (RESEND_API_KEY)" } satisfies ApiResponse<never>,
+        { status: 500 }
+      )
+    }
+
+    if (!process.env.CONTACT_RECEIVER_EMAIL) {
+      return Response.json(
+        { success: false, error: "ระบบส่งอีเมลยังไม่ได้ตั้งค่า (CONTACT_RECEIVER_EMAIL)" } satisfies ApiResponse<never>,
+        { status: 500 }
+      )
+    }
+
     const resend = new Resend(process.env.RESEND_API_KEY)
 
     await resend.emails.send({
       from: `Contact Form <${process.env.CONTACT_SENDER_EMAIL ?? email}>`,
-      to: process.env.CONTACT_RECEIVER_EMAIL!,
+      to: process.env.CONTACT_RECEIVER_EMAIL,
       subject: `ข้อความติดต่อจาก ${name}`,
       replyTo: email,
       html: `
@@ -37,7 +51,8 @@ export async function POST(request: NextRequest) {
       { success: true, data: null } satisfies ApiResponse<null>,
       { status: 200 }
     )
-  } catch {
+  } catch (err) {
+    console.error("Contact form error:", err)
     return Response.json(
       { success: false, error: "ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้ง" } satisfies ApiResponse<never>,
       { status: 500 }
