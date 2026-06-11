@@ -122,7 +122,7 @@ export default function LoginForm() {
       </CardContent>
       <CardFooter className="flex flex-col gap-3">
         <Button type="submit" form="form-login" className="w-full">
-          เข้าสู่ระบบ me wha
+          เข้าสู่ระบบ me whaaaaaa
         </Button>
         <p className="text-center text-sm text-muted-foreground">
           ยังไม่มีบัญชี?{" "}
