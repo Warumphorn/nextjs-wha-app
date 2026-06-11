@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { connection, NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import type { ApiResponse } from "@/types/api"
@@ -11,6 +11,7 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 export async function GET(request: NextRequest) {
+  await connection()
   try {
     const session = await auth.api.getSession({ headers: request.headers })
     if (!session || session.user.role !== "admin") {

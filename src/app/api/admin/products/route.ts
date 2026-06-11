@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { connection, NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { productSchema } from "@/lib/validations/product"
@@ -8,6 +8,7 @@ import type { AdminProduct } from "@/types/admin"
 const PAGE_SIZE = 10
 
 export async function GET(request: NextRequest) {
+  await connection()
   try {
     const session = await auth.api.getSession({ headers: request.headers })
     if (!session || session.user.role !== "admin") {

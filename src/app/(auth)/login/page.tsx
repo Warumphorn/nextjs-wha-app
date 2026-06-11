@@ -51,9 +51,11 @@ export default function LoginForm() {
           email: data.email,
           password: data.password,
          }, {
-            onSuccess: () => {
-              alert('เข้าระบบสำเร็จ');
-              router.replace('/');
+            onSuccess: async () => {
+              const { data: session } = await authClient.getSession()
+              const userRole = (session?.user as Record<string, unknown> | null)?.role
+              const isAdmin = userRole === "admin"
+              router.replace(isAdmin ? "/dashboard" : "/")
             },
             onError: (ctx) => {
               alert(JSON.stringify(ctx.error));
@@ -120,11 +122,11 @@ export default function LoginForm() {
       </CardContent>
       <CardFooter className="flex flex-col gap-3">
         <Button type="submit" form="form-login" className="w-full">
-          เข้าสู่ระบบ1234
+          เข้าสู่ระบบ
         </Button>
         <p className="text-center text-sm text-muted-foreground">
           ยังไม่มีบัญชี?{" "}
-          <a href="/register" className="underline underline-offset-4 hover:text-primary">
+           <a href="/signup" className="underline underline-offset-4 hover:text-primary">
             สมัครสมาชิก
           </a>
         </p>
